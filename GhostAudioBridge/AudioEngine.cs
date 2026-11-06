@@ -167,6 +167,9 @@ internal sealed class AudioEngine : IDisposable
         offset += 8;
     }
 
+    private static short ToPcm16(float sample) =>
+        (short)Math.Clamp((int)MathF.Round(sample * 32767f), short.MinValue, short.MaxValue);
+
     private static float PanLeft(float pan) => pan > 0 ? 1f - pan : 1f;
     private static float PanRight(float pan) => pan < 0 ? 1f + pan : 1f;
 
@@ -179,7 +182,12 @@ internal sealed class AudioEngine : IDisposable
         float[] a = new float[blockSamples];
         float[] b = new float[blockSamples];
         float[] c = new float[blockSamples];
-        byte[] pcm = new byte[blockSamples * 2];
+
+        // Keep the two destinations separate:
+        // headphones receive the keyboard only (no microphone sidetone),
+        // while the virtual microphone receives keyboard + laptop microphone.
+        byte[] monitorPcm = new byte[blockSamples * 2];
+        byte[] virtualPcm = new byte[blockSamples * 2];
         int blockDelayMs = Math.Max(1, (int)Math.Round(_bufferFrames * 1000.0 / Rate));
 
         while (!token.IsCancellationRequested)
@@ -194,13 +202,17 @@ internal sealed class AudioEngine : IDisposable
 
             for (int i = 0; i < blockSamples; i++)
             {
-                float mixed = Math.Clamp((a[i] + b[i] + c[i]) * master, -1f, 1f);
-                short sample = (short)Math.Clamp((int)MathF.Round(mixed * 32767f), short.MinValue, short.MaxValue);
-                BinaryPrimitives.WriteInt16LittleEndian(pcm.AsSpan(i * 2, 2), sample);
+                float keyboard = Math.Clamp((a[i] + b[i]) * master, -1f, 1f);
+                float chatGptMix = Math.Clamp((a[i] + b[i] + c[i]) * master, -1f, 1f);
+
+                short monitorSample = ToPcm16(keyboard);
+                short virtualSample = ToPcm16(chatGptMix);
+                BinaryPrimitives.WriteInt16LittleEndian(monitorPcm.AsSpan(i * 2, 2), monitorSample);
+                BinaryPrimitives.WriteInt16LittleEndian(virtualPcm.AsSpan(i * 2, 2), virtualSample);
             }
 
-            _monitorBuffer?.AddSamples(pcm, 0, pcm.Length);
-            _virtualBuffer?.AddSamples(pcm, 0, pcm.Length);
+            _monitorBuffer?.AddSamples(monitorPcm, 0, monitorPcm.Length);
+            _virtualBuffer?.AddSamples(virtualPcm, 0, virtualPcm.Length);
             try { await Task.Delay(blockDelayMs, token); }
             catch (OperationCanceledException) { break; }
         }

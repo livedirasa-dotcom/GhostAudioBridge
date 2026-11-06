@@ -122,9 +122,9 @@
             <TextBlock x:Name="BufferInfoText" Text="128 samples ≈ 2.67 ms @ 48 kHz"
                        Foreground="#4ADE80" Margin="12,0,0,0"/>
           </DockPanel>
-          <CheckBox x:Name="MonitorEnabled" Content="Send mixed sound to headphones / monitor" IsChecked="True"
+          <CheckBox x:Name="MonitorEnabled" Content="Monitor keyboard audio in headphones (microphone excluded)" IsChecked="True"
                     Foreground="#ECFDF5" Margin="0,3,0,9"/>
-          <CheckBox x:Name="VirtualEnabled" Content="Send mixed sound to virtual cable for ChatGPT" IsChecked="True"
+          <CheckBox x:Name="VirtualEnabled" Content="Send keyboard + laptop microphone to ChatGPT virtual input" IsChecked="True"
                     Foreground="#ECFDF5" Margin="0,3,0,9"/>
           <TextBlock Text="Master level" Foreground="#A7C7B3"/>
           <DockPanel>
