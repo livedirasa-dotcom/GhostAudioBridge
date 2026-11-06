@@ -1,0 +1,38 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore GhostAudioBridge.sln
+
+      - name: Build
+        run: dotnet build GhostAudioBridge.sln -c Release --no-restore
+
+      - name: Publish self-contained Windows x64
+        run: dotnet publish GhostAudioBridge/GhostAudioBridge.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o artifacts/GhostAudioBridge-win-x64
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GhostAudioBridge-win-x64
+          path: artifacts/GhostAudioBridge-win-x64/
+          if-no-files-found: error
+          retention-days: 14
