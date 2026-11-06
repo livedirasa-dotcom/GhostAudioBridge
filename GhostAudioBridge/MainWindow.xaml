@@ -1,0 +1,149 @@
+<Window x:Class="GhostAudioBridge.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ghost Audio Bridge" Height="790" Width="900"
+        MinHeight="700" MinWidth="760" Background="#07130F"
+        Foreground="#ECFDF5" WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <Style TargetType="GroupBox">
+      <Setter Property="Foreground" Value="#4ADE80"/>
+      <Setter Property="BorderBrush" Value="#24513B"/>
+      <Setter Property="Padding" Value="12"/>
+      <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+    <Style TargetType="TextBlock">
+      <Setter Property="Foreground" Value="#ECFDF5"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    <Style TargetType="ComboBox">
+      <Setter Property="Background" Value="#10291D"/>
+      <Setter Property="Foreground" Value="#ECFDF5"/>
+      <Setter Property="Padding" Value="6"/>
+      <Setter Property="Margin" Value="0,4,0,8"/>
+    </Style>
+    <Style TargetType="Button">
+      <Setter Property="Background" Value="#4ADE80"/>
+      <Setter Property="Foreground" Value="#07130F"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Padding" Value="18,9"/>
+      <Setter Property="Margin" Value="0,0,8,0"/>
+    </Style>
+    <Style TargetType="Slider">
+      <Setter Property="Margin" Value="8,0,8,0"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+  </Window.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Grid Margin="22">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <DockPanel Grid.Row="0" Margin="0,0,0,18">
+        <StackPanel>
+          <TextBlock Text="GHOST AUDIO BRIDGE" FontSize="25" FontWeight="Bold" Foreground="#4ADE80"/>
+          <TextBlock Text="LIVE INPUT MIXER  ·  WINDOWS 11" Foreground="#A7C7B3" FontSize="11" Margin="0,4,0,0"/>
+        </StackPanel>
+        <Border DockPanel.Dock="Right" Background="#10291D" BorderBrush="#24513B"
+                BorderThickness="1" CornerRadius="8" Padding="12,7" VerticalAlignment="Center">
+          <TextBlock x:Name="StateText" Text="STOPPED" Foreground="#A7C7B3" FontWeight="Bold"/>
+        </Border>
+      </DockPanel>
+      <GroupBox Grid.Row="1" Header="DEVICE ROUTING">
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Margin="0,0,12,0">
+            <TextBlock Text="M-Audio input device (stereo)"/>
+            <ComboBox x:Name="InputDeviceCombo"/>
+            <TextBlock Text="Laptop microphone (mono)"/>
+            <ComboBox x:Name="MicDeviceCombo"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Margin="12,0,0,0">
+            <TextBlock Text="Headphones / monitor output"/>
+            <ComboBox x:Name="MonitorDeviceCombo"/>
+            <TextBlock Text="Virtual cable output (select CABLE Input)"/>
+            <ComboBox x:Name="VirtualDeviceCombo"/>
+          </StackPanel>
+        </Grid>
+      </GroupBox>
+      <GroupBox Grid.Row="2" Header="M-AUDIO INPUT CHANNELS">
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Margin="0,0,12,0">
+            <TextBlock Text="INPUT 1  ·  LEFT"/>
+            <DockPanel Margin="0,5,0,0">
+              <TextBlock Text="Level" Width="48" Foreground="#A7C7B3"/>
+              <Slider x:Name="Line1Gain" Minimum="0" Maximum="2" Value="1"/>
+              <TextBlock x:Name="Line1GainText" Text="100%" Width="48"/>
+            </DockPanel>
+            <DockPanel>
+              <TextBlock Text="Pan" Width="48" Foreground="#A7C7B3"/>
+              <Slider x:Name="Line1Pan" Minimum="-1" Maximum="1" Value="-1"/>
+              <TextBlock x:Name="Line1PanText" Text="L" Width="48"/>
+            </DockPanel>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Margin="12,0,0,0">
+            <TextBlock Text="INPUT 2  ·  RIGHT"/>
+            <DockPanel Margin="0,5,0,0">
+              <TextBlock Text="Level" Width="48" Foreground="#A7C7B3"/>
+              <Slider x:Name="Line2Gain" Minimum="0" Maximum="2" Value="1"/>
+              <TextBlock x:Name="Line2GainText" Text="100%" Width="48"/>
+            </DockPanel>
+            <DockPanel>
+              <TextBlock Text="Pan" Width="48" Foreground="#A7C7B3"/>
+              <Slider x:Name="Line2Pan" Minimum="-1" Maximum="1" Value="1"/>
+              <TextBlock x:Name="Line2PanText" Text="R" Width="48"/>
+            </DockPanel>
+          </StackPanel>
+        </Grid>
+      </GroupBox>
+      <GroupBox Grid.Row="3" Header="LAPTOP MICROPHONE">
+        <DockPanel>
+          <TextBlock Text="Mic level" Width="90" Foreground="#A7C7B3"/>
+          <Slider x:Name="MicGain" Minimum="0" Maximum="2" Value="1"/>
+          <TextBlock x:Name="MicGainText" Text="100%" Width="55"/>
+        </DockPanel>
+      </GroupBox>
+      <GroupBox Grid.Row="4" Header="MONITORING &amp; CHATGPT FEED">
+        <StackPanel>
+          <DockPanel Margin="0,0,0,8">
+            <TextBlock Text="Buffer size (samples)" Foreground="#A7C7B3" Width="155"/>
+            <ComboBox x:Name="BufferSizeCombo" Width="125" SelectedIndex="1">
+              <ComboBoxItem Content="64"/>
+              <ComboBoxItem Content="128"/>
+              <ComboBoxItem Content="256"/>
+              <ComboBoxItem Content="512"/>
+              <ComboBoxItem Content="1024"/>
+            </ComboBox>
+            <TextBlock x:Name="BufferInfoText" Text="128 samples ≈ 2.67 ms @ 48 kHz"
+                       Foreground="#4ADE80" Margin="12,0,0,0"/>
+          </DockPanel>
+          <CheckBox x:Name="MonitorEnabled" Content="Send mixed sound to headphones / monitor" IsChecked="True"
+                    Foreground="#ECFDF5" Margin="0,3,0,9"/>
+          <CheckBox x:Name="VirtualEnabled" Content="Send mixed sound to virtual cable for ChatGPT" IsChecked="True"
+                    Foreground="#ECFDF5" Margin="0,3,0,9"/>
+          <TextBlock Text="Master level" Foreground="#A7C7B3"/>
+          <DockPanel>
+            <Slider x:Name="MasterGain" Minimum="0" Maximum="1.5" Value="0.8"/>
+            <TextBlock x:Name="MasterGainText" Text="80%" Width="55"/>
+          </DockPanel>
+          <TextBlock Text="ChatGPT microphone: CABLE Output. App playback target: CABLE Input. Buffer setting controls the app's software processing block; exact ASIO hardware buffering requires the M-Audio ASIO driver path."
+                     Foreground="#A7C7B3" TextWrapping="Wrap" FontSize="11" Margin="0,7,0,0"/>
+        </StackPanel>
+      </GroupBox>
+      <StackPanel Grid.Row="5" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,5,0,0">
+        <Button x:Name="StartButton" Content="START" Click="StartButton_Click" Width="120"/>
+        <Button x:Name="StopButton" Content="STOP" Click="StopButton_Click" Width="120" IsEnabled="False"
+                Background="#24513B" Foreground="#ECFDF5"/>
+        <Button x:Name="RefreshButton" Content="REFRESH DEVICES" Click="RefreshButton_Click"
+                Background="#10291D" Foreground="#ECFDF5"/>
+        <TextBlock x:Name="StatusText" Text="Select devices, then press START." Foreground="#A7C7B3"
+                   Margin="15,0,0,0" TextWrapping="Wrap" MaxWidth="380"/>
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
+</Window>
